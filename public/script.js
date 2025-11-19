@@ -48,7 +48,7 @@ async function generateResponse(text) {
 }
 
 async function callServerAPI(inputText) {
-  const response = await fetch(process.env.Backend_URL, {
+  const response = await fetch(window.BACKEND_URL, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
