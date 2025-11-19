@@ -1,1 +1,0 @@
-window.BACKEND_URL = "https://chatdpt-aby8.onrender.com/chat";

@@ -48,7 +48,7 @@ async function generateResponse(text) {
 }
 
 async function callServerAPI(inputText) {
-  const response = await fetch("", {
+  const response = await fetch("/chat", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
