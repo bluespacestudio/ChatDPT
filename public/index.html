@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <title>ChatDPT</title>
+  </head>
+  <body class="bg-neutral-900 text-white overflow-x-hidden">
+    <div class="container mx-auto max-w-3xl mb-4 pb-48 p-2" id="chat-container">
+      <!-- Messages goes here -->
+
+      <!-- User message -->
+      <!-- <div class="my-6 bg-neutral-800 px-3 py-2 rounded-xl ml-auto max-w-fit">
+        How are you?
+      </div> -->
+
+      <!-- Assistant message -->
+      <!-- <div class="max-w-fit">I am fine, thank you!</div> -->
+
+      <!-- Bottom input area -->
+      <div class="fixed inset-x-0 bottom-0 flex items-center justify-center bg-neutral-900 p-4">
+        <div class="bg-neutral-800 p-2 rounded-3xl w-full max-w-3xl mb-2">
+          <textarea
+            class="w-full resize-none outline-0 p-2"
+            rows="2"
+            id="user-input"
+            placeholder="Type your message..."
+          ></textarea>
+          <div class="flex items-center justify-end mt-2">
+            <button class="bg-white text-black px-4 py-1 rounded-full cursor-pointer hover:bg-gray-300 font-medium" id="send-button">
+              Send
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <script src="script.js"></script>
+  </body>
+</html>
