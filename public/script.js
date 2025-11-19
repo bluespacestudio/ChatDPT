@@ -48,7 +48,7 @@ async function generateResponse(text) {
 }
 
 async function callServerAPI(inputText) {
-  const response = await fetch("http://localhost:3001/chat", {
+  const response = await fetch(process.env.Backend_URL, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
