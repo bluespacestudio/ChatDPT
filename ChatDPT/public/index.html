@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <style>
+      /* Hide scrollbars but keep scrollability */
+      #chat-container {
+        scrollbar-width: none;
+        -ms-overflow-style: none;
+      }
+      #chat-container::-webkit-scrollbar {
+        display: none;
+      }
+    </style>
+    <title>ChatDPT</title>
+  </head>
+  <body class="bg-neutral-900 text-white overflow-x-hidden">
+    <div class="container mx-auto max-w-3xl px-2 pt-4 pb-60">
+      <div
+        id="chat-container"
+        class="space-y-4 max-h-[calc(100vh-220px)] overflow-y-auto pr-1"
+      >
+        <!-- Messages render here -->
+      </div>
+    </div>
+
+    <!-- Bottom input area -->
+    <div class="fixed inset-x-0 bottom-0 bg-neutral-900 p-4">
+      <div class="w-full max-w-3xl mx-auto">
+        <div class="flex items-end gap-2 rounded-2xl border border-neutral-700 bg-neutral-800 px-3 py-2 shadow-lg shadow-black/25">
+          <label class="flex items-center justify-center w-10 h-10 rounded-xl hover:bg-neutral-700 cursor-pointer transition-colors">
+            <span class="inline-block w-5 h-5 text-gray-200">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M8 7l8.5 8.5a3 3 0 01-4.24 4.24l-7.07-7.07a4.5 4.5 0 016.36-6.36l7.07 7.07" />
+              </svg>
+            </span>
+            <input type="file" id="file-input" accept="application/pdf" class="hidden" />
+          </label>
+          <textarea
+            class="flex-1 resize-none outline-none bg-transparent text-white p-3 rounded-xl leading-relaxed min-h-[48px] max-h-32 overflow-y-auto"
+            rows="2"
+            id="user-input"
+            placeholder="Type your message or drop a PDF..."
+          ></textarea>
+          <button
+            class="bg-white text-black px-3 py-1 rounded-xl cursor-pointer hover:bg-gray-300 font-semibold transition-colors shadow-md"
+            id="send-button"
+          >
+            Send
+          </button>
+        </div>
+        <div class="flex items-center justify-between text-xs text-gray-400 pt-2 gap-3">
+          <button
+            class="bg-white/10 text-white px-3 py-1 rounded-full cursor-pointer hover:bg-white/15 transition-colors"
+            id="upload-button"
+          >
+            Upload & Index
+          </button>
+          <span id="selected-file" class="truncate flex-1 text-left">
+            No file selected
+          </span>
+          <span id="upload-status" class="text-emerald-300 text-right min-w-[160px]"></span>
+        </div>
+      </div>
+    </div>
+    <script src="script.js"></script>
+  </body>
+</html>

@@ -1,6 +1,7 @@
 import Groq from "groq-sdk";
 import { tavily } from "@tavily/core";
 import NodeCache from "node-cache";
+import { fetchSimilarContent } from "./vectorStore.js";
 
 const tvly = tavily({ apiKey: process.env.TAVILY_API_KEY });
 const groq = new Groq({ apiKey: process.env.GROQ_API_KEY });
@@ -33,9 +34,17 @@ export async function generateResponse(userMessage, threadId) {
     // },
   ];
 
-  const messages = cacheMemory?.get(threadId) ?? baseMessages; 
+  const sessionMessages = cacheMemory?.get(threadId)
+    ? [...cacheMemory.get(threadId)]
+    : [...baseMessages];
 
-  messages.push({ role: "user", content: userMessage });
+  const contextualMessages = [...sessionMessages];
+  const contextMessage = await buildContextMessage(userMessage, threadId);
+  if (contextMessage) {
+    contextualMessages.push(contextMessage);
+  }
+
+  contextualMessages.push({ role: "user", content: userMessage });
 
   const max_Retries = 10;
   let count = 0;
@@ -52,7 +61,7 @@ export async function generateResponse(userMessage, threadId) {
       // frequency_penalty: 1,
       // presence_penalty: 1,
       model: "llama-3.3-70b-versatile",
-      messages: messages,
+      messages: contextualMessages,
       tools: [
         {
           type: "function",
@@ -80,13 +89,15 @@ export async function generateResponse(userMessage, threadId) {
       tool_choice: "auto",
     });
 
-    messages.push(completion.choices[0].message);
+    contextualMessages.push(completion.choices[0].message);
     const toolCalls = completion.choices[0].message.tool_calls;
 
     if (!toolCalls) {
       // Final answer from the assistant
-      cacheMemory?.set(threadId, messages);
-      console.log(cacheMemory);
+      const messagesToPersist = contextualMessages.filter(
+        (message) => message !== contextMessage,
+      );
+      cacheMemory?.set(threadId, messagesToPersist);
       return completion.choices[0].message.content;
     }
 
@@ -98,7 +109,7 @@ export async function generateResponse(userMessage, threadId) {
         if (functionName === "webSearchTool") {
           const toolResult = await webSearchTool(JSON.parse(funtionArgs));
           //   console.log(`Tool Result - ${toolResult}`);
-          messages.push({
+          contextualMessages.push({
             tool_call_id: toolCall.id,
             role: "tool",
             name: functionName,
@@ -116,4 +127,32 @@ async function webSearchTool({ query }) {
   const finalResult = response.results.map((res) => res.content).join("\n\n");
   console.log("Calling web Search Result...");
   return finalResult;
+}
+
+async function buildContextMessage(userMessage, threadId) {
+  try {
+    const filter = threadId ? { threadId } : undefined;
+    const results = await fetchSimilarContent(userMessage, filter);
+
+    if (!results?.length) {
+      return null;
+    }
+
+    const contextText = results
+      .map((doc) => doc?.pageContent)
+      .filter(Boolean)
+      .join("\n\n");
+
+    if (!contextText) {
+      return null;
+    }
+
+    return {
+      role: "system",
+      content: `Use the following context extracted from the user's uploaded documents when it is relevant. If it is not relevant, answer normally.\n${contextText}`,
+    };
+  } catch (error) {
+    console.error("Context building failed:", error);
+    return null;
+  }
 }
